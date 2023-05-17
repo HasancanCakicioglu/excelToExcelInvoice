@@ -1,0 +1,2 @@
+D:\pycharmProjectFolder\excelToExcelInvoice\venv\Scripts\pyuic5.exe -x C:\Users\Yonet\Desktop\exceltoexcelınvoiceui\main.ui -o D:\pycharmProjectFolder\excelToExcelInvoice\mainPage.py
+D:\pycharmProjectFolder\excelToExcelInvoice\venv\Scripts\pyuic5.exe -x C:\Users\Yonet\Desktop\exceltoexcelınvoiceui\gelir.ui -o D:\pycharmProjectFolder\excelToExcelInvoice\gelir.py
