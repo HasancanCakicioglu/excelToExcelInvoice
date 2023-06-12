@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import xlrd
+from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QTableWidgetItem, QTableWidget, QComboBox
 import numpy
@@ -20,6 +21,120 @@ class myGelir(QMainWindow):
 
         self.myPageForm.pushButton_select_folder.clicked.connect(self.selectFolder)
         self.myPageForm.pushButton.clicked.connect(self.createExcel)
+
+        self.myPageForm.pushButton_doldur.clicked.connect(self.doldur)
+        self.myPageForm.pushButton_temizle.clicked.connect(self.temizle)
+
+
+    def doldur(self):
+
+        self.clear(1)
+
+        self.oneToSecondTable()
+
+
+    def clear(self,table:int):
+        if table ==0:
+            self.myPageForm.tableWidgetFaturalar_1.clear()
+        elif table == 1:
+            self.myPageForm.tableWidgetFaturalar_2.clear()
+        else:
+            self.myPageForm.tableWidgetFaturalar_1.clear()
+            self.myPageForm.tableWidgetFaturalar_2.clear()
+
+
+
+    def temizle(self):
+        self.myPageForm.tableWidgetFaturalar_2.clear()
+
+
+    def oneToSecondTable(self):
+
+        # İşaretlenmiş satırları al
+        selected_rows = []
+        for row in range(self.myPageForm.tableWidgetFaturalar_1.rowCount()):
+            item = self.myPageForm.tableWidgetFaturalar_1.item(row, 0)
+
+            if item is not None and item.checkState() == Qt.Checked:
+                selected_rows.append(row)
+
+        # Verileri DataFrame'e aktar
+        data = []
+        header_labels = []
+        for col in range(self.myPageForm.tableWidgetFaturalar_1.columnCount()):
+            header_item = self.myPageForm.tableWidgetFaturalar_1.horizontalHeaderItem(col)
+            if header_item is not None:
+                header_labels.append(header_item.text())
+
+        for row in selected_rows:
+            row_data = []
+            for col in range(self.myPageForm.tableWidgetFaturalar_1.columnCount()):
+                item = self.myPageForm.tableWidgetFaturalar_1.item(row, col)
+                if item is not None:
+                    row_data.append(item.text())
+            data.append(row_data)
+
+        df = pd.DataFrame(data, columns=header_labels)
+
+
+        self.fill_crated_excel_2(df)
+
+    def fill_crated_excel_2(self,df:DataFrame):
+
+        self.table_widget = self.myPageForm.tableWidgetFaturalar_2
+
+        rowCount = df.shape[0]
+
+        header = GelirConst.gelirHeader
+
+
+        self.table_widget.setColumnCount(len(header))
+        self.table_widget.setRowCount(rowCount+1)
+
+        self.table_widget.setHorizontalHeaderLabels(header)
+
+        column_names = []
+        for i in range(self.myPageForm.tableWidgetFaturalar_1.columnCount()):
+            header = self.myPageForm.tableWidgetFaturalar_1.horizontalHeaderItem(i)
+            column_names.append(header.text())
+
+
+        # Populate combo boxes
+        for col in column_names:
+            combo_box = QComboBox()
+            for item in column_names:
+                combo_box.addItem(str(item))
+            index = column_names.index(col)
+            self.table_widget.setCellWidget(0, index, combo_box)
+            combo_box.currentIndexChanged.connect(
+                lambda index, row=0, col=index: self.update_table(index, row, col,column_names))
+
+
+
+        self.fill_ready_part_date(df,"Belge Tarihi",'Oluşturulma Tarihi')
+        self.fill_ready_part_date(df, "Deftere Kayıt Tarihi", 'Oluşturulma Tarihi')
+        self.fill_ready_part(df, "Adı/Unvan Devamı", 'Firma Ünvanı')
+
+        self.fill_ready_part(df, "Fatura No", 'Fatura No')
+        self.fill_ready_part_with_constants("Nihai Tüketici","Evet")
+        #self.fill_ready_part_tc(df, "TCKN/VKN", 'Alıcı VKN')
+
+        self.fill_ready_part_name_surname(df, "Adı/Unvan Devamı", 'Firma Ünvanı',True)
+        self.fill_ready_part_name_surname(df, "Soyadı/Unvan", 'Firma Ünvanı', False)
+
+        #self.fill_ready_part_with_constants("Vergi Dairesi/Ülke", "052")
+
+        self.fill_ready_part_with_constants("Satış Türü", "1")
+        self.fill_ready_part_with_constants("Gelir Kayıt Türü", "1")
+        self.fill_ready_part_with_constants("Gelir Kayıt Alt Türü", "2")
+
+        self.fill_ready_part_with_constants("Faaliyet Kodu", "479114")
+        self.fill_ready_part_with_constants("KDV Oranı", "18")
+
+        self.fill_ready_part_kdv_haric(df,"Tutar (KDV Hariç)","Fatura Tutarı","Toplam Vergi")
+
+        self.fill_ready_part_with_constants("Kredi Kartı", '0')
+        self.fill_ready_part_with_constants("Açıklama", 'Fatura Toplu Belge')
 
     def createExcel(self):
         row_count = self.table_widget.rowCount()
@@ -65,6 +180,7 @@ class myGelir(QMainWindow):
 
         # "belge_tarihi" sütununun güncellenmesi
         for row in range(1,self.table_widget.rowCount()):
+
             belge_tarihi = df.iloc[row-1][second]
             item = QTableWidgetItem(str(belge_tarihi))
             self.table_widget.setItem(row, belge_tarihi_column_index, item)
@@ -81,7 +197,8 @@ class myGelir(QMainWindow):
         # "belge_tarihi" sütununun güncellenmesi
         for row in range(1,self.table_widget.rowCount()):
             belge_tarihi = str(df.iloc[row-1][second]).split(".")[0]
-            item = QTableWidgetItem(str(belge_tarihi))
+            # alttaki satıra belge tarihni yazdırırsan tcyi yazar
+            item = QTableWidgetItem("")
             self.table_widget.setItem(row, belge_tarihi_column_index, item)
 
     def fill_ready_part_date(self,df:DataFrame,first:str,second:str):
@@ -95,6 +212,7 @@ class myGelir(QMainWindow):
 
         # "belge_tarihi" sütununun güncellenmesi
         for row in range(1,self.table_widget.rowCount()):
+
             belge_tarihi = str(df.iloc[row-1][second]).split(" ")[0].replace("-", ".")
             new_date = str(belge_tarihi.split(".")[-1])+"."+str(belge_tarihi.split(".")[-2])+"."+str(belge_tarihi.split(".")[-3][-2:])
             item = QTableWidgetItem(new_date)
@@ -111,7 +229,9 @@ class myGelir(QMainWindow):
 
         # "belge_tarihi" sütununun güncellenmesi
         for row in range(1,self.table_widget.rowCount()):
-            fiyat = df.iloc[row-1][second] - df.iloc[row-1][third]
+            #fiyat = df.iloc[row-1][second] - df.iloc[row-1][third]
+            fiyat = float(df.iloc[row - 1][second]) - float(df.iloc[row - 1][third])
+
             formatli_fiyat = "{:,.2f}".format(fiyat).replace(".", ",")
             item = QTableWidgetItem(str(formatli_fiyat))
             self.table_widget.setItem(row, belge_tarihi_column_index, item)
@@ -162,7 +282,7 @@ class myGelir(QMainWindow):
             self.table_widget.setItem(row, belge_tarihi_column_index, item)
 
     def fill_crated_excel(self,df:DataFrame):
-        print("1")
+
         self.table_widget = self.myPageForm.tableWidgetFaturalar_2
 
         rowCount = self.myPageForm.tableWidgetFaturalar_1.rowCount()
@@ -179,7 +299,7 @@ class myGelir(QMainWindow):
         for i in range(self.myPageForm.tableWidgetFaturalar_1.columnCount()):
             header = self.myPageForm.tableWidgetFaturalar_1.horizontalHeaderItem(i)
             column_names.append(header.text())
-        print(column_names)
+
 
         # Populate combo boxes
         for col in column_names:
@@ -198,23 +318,26 @@ class myGelir(QMainWindow):
         self.fill_ready_part(df, "Adı/Unvan Devamı", 'Firma Ünvanı')
 
         self.fill_ready_part(df, "Fatura No", 'Fatura No')
-        self.fill_ready_part_with_constants("Nihai Tüketici","Hayır")
+        self.fill_ready_part_with_constants("Nihai Tüketici","Evet")
         self.fill_ready_part_tc(df, "TCKN/VKN", 'Alıcı VKN')
 
         self.fill_ready_part_name_surname(df, "Adı/Unvan Devamı", 'Firma Ünvanı',True)
         self.fill_ready_part_name_surname(df, "Soyadı/Unvan", 'Firma Ünvanı', False)
 
-        self.fill_ready_part_with_constants("Vergi Dairesi/Ülke", "052")
+        self.fill_ready_part_with_constants("Vergi Dairesi/Ülke", "")
 
         self.fill_ready_part_with_constants("Satış Türü", "1")
         self.fill_ready_part_with_constants("Gelir Kayıt Türü", "1")
-        self.fill_ready_part_with_constants("Gelir Kayıt Alt Türü", "1")
+        self.fill_ready_part_with_constants("Gelir Kayıt Alt Türü", "2")
+
+        self.fill_ready_part_with_constants("Faaliyet Kodu", "479114")
 
         self.fill_ready_part_with_constants("KDV Oranı", "18")
 
         self.fill_ready_part_kdv_haric(df,"Tutar (KDV Hariç)","Fatura Tutarı","Toplam Vergi")
 
         self.fill_ready_part_with_constants("Kredi Kartı", '0')
+        self.fill_ready_part_with_constants("Açıklama", 'Fatura Toplu Belge')
 
 
     def update_combo_box(self):
@@ -224,14 +347,12 @@ class myGelir(QMainWindow):
             header = self.myPageForm.tableWidgetFaturalar_1.horizontalHeaderItem(i)
             column_names.append(header.text())
             self.myComboBox.addItem(header.text())
-        print(column_names)
+
 
 
 
     def update_table(self, index, row,col,column_names):
-        print(index)
-        print(row)
-        print(col)
+
         oneColumnDatas = []
         columnIndex = index  # 0'dan başlayarak sıfırdan başlayarak 3. sütunun indeksi 2'dir
 
@@ -240,7 +361,7 @@ class myGelir(QMainWindow):
             if item is not None:
                 oneColumnDatas.append(item.text())
 
-        print(oneColumnDatas)
+
         for row in range(0, self.table_widget.rowCount()-1):
             cell = QTableWidgetItem(str(oneColumnDatas[row]))
             self.table_widget.setItem(row+1, col, cell)

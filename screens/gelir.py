@@ -45,6 +45,12 @@ class Ui_Gelir(object):
         self.lineEdit_path_excel = QtWidgets.QLineEdit(self.frame)
         self.lineEdit_path_excel.setGeometry(QtCore.QRect(540, 260, 391, 30))
         self.lineEdit_path_excel.setObjectName("lineEdit_path_excel")
+        self.pushButton_doldur = QtWidgets.QPushButton(self.frame)
+        self.pushButton_doldur.setGeometry(QtCore.QRect(430, 257, 93, 31))
+        self.pushButton_doldur.setObjectName("pushButton_doldur")
+        self.pushButton_temizle = QtWidgets.QPushButton(self.frame)
+        self.pushButton_temizle.setGeometry(QtCore.QRect(800, 550, 93, 28))
+        self.pushButton_temizle.setObjectName("pushButton_temizle")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1007, 26))
@@ -62,6 +68,8 @@ class Ui_Gelir(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton_select_folder.setText(_translate("MainWindow", "..."))
         self.pushButton.setText(_translate("MainWindow", "Create Excel"))
+        self.pushButton_doldur.setText(_translate("MainWindow", "Doldur"))
+        self.pushButton_temizle.setText(_translate("MainWindow", "Temizle"))
 
 
 
