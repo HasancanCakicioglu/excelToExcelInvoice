@@ -25,11 +25,29 @@ class myGelir(QMainWindow):
         self.myPageForm.pushButton_doldur.clicked.connect(self.doldur)
         self.myPageForm.pushButton_temizle.clicked.connect(self.temizle)
 
+        self.name = self.myPageForm.comboBox_name.currentText()  # combo box'ta seçili olan metni alır
+        self.myPageForm.comboBox_name.currentTextChanged.connect(self.updateName)  # combo box'ta seçim değiştiğinde updateName fonksiyonunu çağırır
+
+        self.type = self.myPageForm.comboBox_type.currentText()
+        self.myPageForm.comboBox_type.currentTextChanged.connect(self.updateType)
+
+        self.myPageForm.pushButton_kaydet.clicked.connect(self.kaydetButton)
+
+    def kaydetButton(self):
+        self.myPageForm.pushButton_kaydet.setStyleSheet("background-color: rgb(61, 255, 2);")
+        self.myPageForm.tableWidgetFaturalar_2.clear()
+
+    def updateName(self,new_text):
+        self.name = new_text
+        self.myPageForm.pushButton_kaydet.setStyleSheet("background-color: rgb(255, 95, 21);")
+
+    def updateType(self,new_text):
+        self.type = new_text
+        self.myPageForm.pushButton_kaydet.setStyleSheet("background-color: rgb(255, 95, 21);")
 
     def doldur(self):
 
         self.clear(1)
-
         self.oneToSecondTable()
 
 
@@ -85,7 +103,10 @@ class myGelir(QMainWindow):
 
         rowCount = df.shape[0]
 
-        header = GelirConst.gelirHeader
+        if self.type == "e-arşiv":
+            header = GelirConst.gelirHeader
+        else:
+            header = GelirConst.gelir_e_Fatura
 
 
         self.table_widget.setColumnCount(len(header))
@@ -116,13 +137,17 @@ class myGelir(QMainWindow):
         self.fill_ready_part(df, "Adı/Unvan Devamı", 'Firma Ünvanı')
 
         self.fill_ready_part(df, "Fatura No", 'Fatura No')
-        self.fill_ready_part_with_constants("Nihai Tüketici","Evet")
-        #self.fill_ready_part_tc(df, "TCKN/VKN", 'Alıcı VKN')
+        if self.type == "e-arşiv":
+            self.fill_ready_part_with_constants("Nihai Tüketici", "Evet")
+        else:
+            self.fill_ready_part_tc(df, "TCKN/VKN", 'Alıcı VKN')
+            self.fill_ready_part_with_constants("Vergi Dairesi/Ülke", "052")
+
 
         self.fill_ready_part_name_surname(df, "Adı/Unvan Devamı", 'Firma Ünvanı',True)
         self.fill_ready_part_name_surname(df, "Soyadı/Unvan", 'Firma Ünvanı', False)
 
-        #self.fill_ready_part_with_constants("Vergi Dairesi/Ülke", "052")
+
 
         self.fill_ready_part_with_constants("Satış Türü", "1")
         self.fill_ready_part_with_constants("Gelir Kayıt Türü", "1")
@@ -198,7 +223,7 @@ class myGelir(QMainWindow):
         for row in range(1,self.table_widget.rowCount()):
             belge_tarihi = str(df.iloc[row-1][second]).split(".")[0]
             # alttaki satıra belge tarihni yazdırırsan tcyi yazar
-            item = QTableWidgetItem("")
+            item = QTableWidgetItem(belge_tarihi)
             self.table_widget.setItem(row, belge_tarihi_column_index, item)
 
     def fill_ready_part_date(self,df:DataFrame,first:str,second:str):
@@ -378,13 +403,15 @@ class myGelir(QMainWindow):
         )
 
 
+        if file == "":
+            return None
 
         self.setLineEditText(file)
         df = self.getPDdata()
         self.writeToQTableWidget(df)
         rowCount = self.myPageForm.tableWidgetFaturalar_1.rowCount()
         self.myPageForm.tableWidgetFaturalar_2.setRowCount(rowCount)
-        self.fill_crated_excel(df)
+        #self.fill_crated_excel(df)
 
 
 
@@ -402,7 +429,10 @@ class myGelir(QMainWindow):
 
         self.myPageForm.tableWidgetFaturalar_1.setRowCount(len(df)-1)
         self.myPageForm.tableWidgetFaturalar_1.setColumnCount(len(df.columns))
-        df['Rapor Oluşturulma Tarihi'] = pd.to_datetime(df['Rapor Oluşturulma Tarihi'], format='%d.%m.%Y %H:%M:%S')
+        if self.type=="e-arşiv":
+            df['Rapor Oluşturulma Tarihi'] = pd.to_datetime(df['Rapor Oluşturulma Tarihi'], format='%d.%m.%Y %H:%M:%S')
+        else:
+            df['Rapor Oluşturulma Tarihi'] = pd.to_datetime(df['Oluşturulma Tarihi'], format='%d.%m.%Y %H:%M:%S')
         df = df.sort_values(by='Rapor Oluşturulma Tarihi')
 
         return df
