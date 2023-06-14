@@ -9,6 +9,7 @@ from pandas import DataFrame
 from openpyxl import Workbook
 
 from Constants.gelir import GelirConst
+from Constants.vergi_daire import data_map
 from screens.gelir import Ui_Gelir
 
 
@@ -142,6 +143,7 @@ class myGelir(QMainWindow):
         else:
             self.fill_ready_part_tc(df, "TCKN/VKN", 'Alıcı VKN')
             self.fill_ready_part_with_constants("Vergi Dairesi/Ülke", "052")
+            self.fill_comboBox("Vergi Dairesi/Ülke",data_map)
 
 
         self.fill_ready_part_name_surname(df, "Adı/Unvan Devamı", 'Firma Ünvanı',True)
@@ -160,6 +162,34 @@ class myGelir(QMainWindow):
 
         self.fill_ready_part_with_constants("Kredi Kartı", '0')
         self.fill_ready_part_with_constants("Açıklama", 'Fatura Toplu Belge')
+
+
+    def fill_comboBox(self,header,data_map):
+        # Create the ComboBox widget
+        combo_box = QComboBox()
+
+        # Add the items to the ComboBox
+        for name, value in data_map.items():
+            combo_box.addItem(name, value)
+        selected_item = combo_box.currentText()
+        column_index = 6
+        for row in range(1,self.table_widget.rowCount()):
+            # Connect the currentIndexChanged signal of the ComboBox to a function
+            def update_table_cell(index):
+                selected_item = combo_box.currentText()
+                self.table_widget.setItem(row, column_index, QTableWidgetItem(data_map[selected_item]))
+
+            combo_box.currentIndexChanged.connect(update_table_cell)
+
+            # Set the initial value for the cell
+            selected_item = combo_box.currentText()
+            number = data_map[selected_item]
+            print(number)
+            print(selected_item)
+            self.table_widget.setItem(row, column_index, QTableWidgetItem(number))
+
+            # Set the ComboBox as the cell widget
+            self.table_widget.setCellWidget(row, column_index, combo_box)
 
     def createExcel(self):
         row_count = self.table_widget.rowCount()

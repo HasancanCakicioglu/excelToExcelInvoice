@@ -19,7 +19,7 @@ df = pd.read_excel('C:\\Users\\Yonet\\Desktop\\folder\\exceller\\kısmet\\gelir\
 
 for index, row in df.iterrows():
 
-    print("'{}' : '{}',".format(row[0],row[1]))
+    print("'{}' : '{}',".format(row[1],row[0]))
 
 
 
