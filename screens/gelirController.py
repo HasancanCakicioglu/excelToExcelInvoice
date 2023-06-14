@@ -10,6 +10,7 @@ from openpyxl import Workbook
 
 from Constants.gelir import GelirConst
 from Constants.vergi_daire import data_map
+from error.error_box import  show_warning_message
 from screens.gelir import Ui_Gelir
 
 
@@ -140,9 +141,11 @@ class myGelir(QMainWindow):
         self.fill_ready_part(df, "Fatura No", 'Fatura No')
         if self.type == "e-arşiv":
             self.fill_ready_part_with_constants("Nihai Tüketici", "Evet")
+            self.fill_ready_part_with_constants("Açıklama", 'Fatura Toplu Belge')
         else:
             self.fill_ready_part_tc(df, "TCKN/VKN", 'Alıcı VKN')
-            self.fill_ready_part_with_constants("Vergi Dairesi/Ülke", "052")
+            self.fill_ready_part_with_constants("Açıklama", 'e-Fatura Toplu Belge')
+            #self.fill_ready_part_with_constants("Vergi Dairesi/Ülke", "052")
             self.fill_comboBox("Vergi Dairesi/Ülke",data_map)
 
 
@@ -161,7 +164,7 @@ class myGelir(QMainWindow):
         self.fill_ready_part_kdv_haric(df,"Tutar (KDV Hariç)","Fatura Tutarı","Toplam Vergi")
 
         self.fill_ready_part_with_constants("Kredi Kartı", '0')
-        self.fill_ready_part_with_constants("Açıklama", 'Fatura Toplu Belge')
+
 
 
     def fill_comboBox(self,header,data_map):
@@ -179,7 +182,7 @@ class myGelir(QMainWindow):
             # Connect the currentIndexChanged signal of the ComboBox to a function
             def update_table_cell(index):
                 selected_item = combo_box.currentText()
-                self.table_widget.setItem(row, column_index, QTableWidgetItem(data_map[selected_item]))
+                self.table_widget.setItem(row, column_index, QTableWidgetItem(data_map[selected_item].zfill(6)))
 
             combo_box.currentIndexChanged.connect(update_table_cell)
 
@@ -441,6 +444,8 @@ class myGelir(QMainWindow):
 
         self.setLineEditText(file)
         df = self.getPDdata()
+        if df is None:
+            return None
         self.writeToQTableWidget(df)
         rowCount = self.myPageForm.tableWidgetFaturalar_1.rowCount()
         self.myPageForm.tableWidgetFaturalar_2.setRowCount(rowCount)
@@ -460,12 +465,22 @@ class myGelir(QMainWindow):
         except Exception as e:
             print("hata = " + str(e))
 
+        if type(df) != DataFrame:
+            return None
+
         self.myPageForm.tableWidgetFaturalar_1.setRowCount(len(df)-1)
         self.myPageForm.tableWidgetFaturalar_1.setColumnCount(len(df.columns))
-        if self.type=="e-arşiv":
-            df['Rapor Oluşturulma Tarihi'] = pd.to_datetime(df['Rapor Oluşturulma Tarihi'], format='%d.%m.%Y %H:%M:%S')
-        else:
-            df['Rapor Oluşturulma Tarihi'] = pd.to_datetime(df['Oluşturulma Tarihi'], format='%d.%m.%Y %H:%M:%S')
+        try:
+            if self.type == "e-arşiv":
+                df['Rapor Oluşturulma Tarihi'] = pd.to_datetime(df['Rapor Oluşturulma Tarihi'],
+                                                                format='%d.%m.%Y %H:%M:%S')
+            else:
+                df['Rapor Oluşturulma Tarihi'] = pd.to_datetime(df['Oluşturulma Tarihi'], format='%d.%m.%Y %H:%M:%S')
+        except:
+            #show_warning_message("format yanlış E-fatura veya E-arşiv değiştir onu  ")
+            return None
+
+
         df = df.sort_values(by='Rapor Oluşturulma Tarihi')
 
         return df
