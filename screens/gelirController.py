@@ -167,6 +167,8 @@ class myGelir(QMainWindow):
     def fill_comboBox(self,header,data_map):
         # Create the ComboBox widget
         combo_box = QComboBox()
+        combo_box.setEditable(True)
+        combo_box.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
 
         # Add the items to the ComboBox
         for name, value in data_map.items():
@@ -190,6 +192,7 @@ class myGelir(QMainWindow):
 
             # Set the ComboBox as the cell widget
             self.table_widget.setCellWidget(row, column_index, combo_box)
+        self.table_widget.setColumnWidth(column_index, 400)
 
     def createExcel(self):
         row_count = self.table_widget.rowCount()
