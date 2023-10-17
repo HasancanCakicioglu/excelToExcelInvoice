@@ -393,7 +393,7 @@ class myGelir(QMainWindow):
 
         self.fill_ready_part_with_constants("Faaliyet Kodu", "479114")
 
-        self.fill_ready_part_with_constants("KDV Oranı", "18")
+        self.fill_ready_part_with_constants("KDV Oranı", "20")
 
         self.fill_ready_part_kdv_haric(df,"Tutar (KDV Hariç)","Fatura Tutarı","Toplam Vergi")
 
