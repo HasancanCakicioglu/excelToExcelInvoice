@@ -130,7 +130,7 @@ class myGelir(QMainWindow):
             index = column_names.index(col)
             self.table_widget.setCellWidget(0, index, combo_box)
             combo_box.currentIndexChanged.connect(
-                lambda index, row=0, col=index: self.update_table(index, row, col,column_names))
+                lambda index : self.update_table(index, row=0, col=index,column_names = column_names))
 
 
 
@@ -370,7 +370,7 @@ class myGelir(QMainWindow):
             index = column_names.index(col)
             self.table_widget.setCellWidget(0, index, combo_box)
             combo_box.currentIndexChanged.connect(
-                lambda index, row=0, col=index: self.update_table(index, row, col,column_names))
+                lambda index:self.update_table(index, row=0, col=index,column_names=column_names))
 
 
 
