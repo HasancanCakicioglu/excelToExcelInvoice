@@ -1,0 +1,35 @@
+﻿Dosyadaki sutunlar (34 adet):
+  1. Deftere Kay─▒t Tarihi
+  2. Belge Tarihi
+  3. Fatura No
+  4. Nihai T├╝ketici
+  5. TCKN/VKN
+  6. Soyad─▒/Unvan
+  7. Ad─▒/Unvan Devam─▒
+  8. Vergi Dairesi/├£lke
+  9. Adres
+  10. Sat─▒┼ş T├╝r├╝
+  11. Gelir Kay─▒t T├╝r├╝
+  12. ─░┼şlem T├╝r├╝
+  13. Gelir Kay─▒t Alt T├╝r├╝
+  14. KDV'siz ─░┼şlem
+  15. KDV Oran─▒
+  16. Faaliyet Kodu
+  17. Tutar (KDV Hari├ğ)
+  18. Stopaj
+  19. Stopaj Tutar─▒
+  20. ─░hra├ğ Kay─▒tl─▒ Sat─▒┼ş
+  21. KDV Tevkifat─▒
+  22. Bildirim T├╝r├╝
+  23. ├ûzel Matrah ─░┼şlem T├╝r├╝
+  24. ─░┼şlem Bedeli
+  25. ─░┼şlem Bedelinden D├╝┼ş├╝lecek Tutar
+  26. ├ûzel Matrah Matraha Dahil Olmayan Bedel
+  27. ─░ste─şe Ba─şl─▒ Tam Tevkifat
+  28. Di─şer ─░┼şlemler
+  29. Miktar
+  30. Sabit K─▒ymet Kodu
+  31. K─▒smi ─░stisna
+  32. Tam ─░stisna
+  33. Kredi Kart─▒
+  34. A├ğ─▒klama

@@ -156,6 +156,7 @@ class myGelir(QMainWindow):
 
         self.fill_ready_part_with_constants("Satış Türü", "1")
         self.fill_ready_part_with_constants("Gelir Kayıt Türü", "1")
+        self.fill_ready_part_with_constants("İşlem Türü", "1100")
         self.fill_ready_part_with_constants("Gelir Kayıt Alt Türü", "2")
 
         self.fill_ready_part_with_constants("Faaliyet Kodu", "479114")
@@ -163,6 +164,11 @@ class myGelir(QMainWindow):
 
         self.fill_ready_part_kdv_haric(df,"Tutar (KDV Hariç)","Fatura Tutarı","Toplam Vergi")
 
+        self.fill_ready_part_with_constants("Bildirim Türü", "")
+        self.fill_ready_part_with_constants("Özel Matrah İşlem Türü", "")
+        self.fill_ready_part_with_constants("İşlem Bedeli", "")
+        self.fill_ready_part_with_constants("İşlem Bedelinden Düşülecek Tutar", "")
+        self.fill_ready_part_with_constants("Özel Matrah Matraha Dahil Olmayan Bedel", "")
         self.fill_ready_part_with_constants("Kredi Kartı", '0')
 
 
@@ -389,6 +395,7 @@ class myGelir(QMainWindow):
 
         self.fill_ready_part_with_constants("Satış Türü", "1")
         self.fill_ready_part_with_constants("Gelir Kayıt Türü", "1")
+        self.fill_ready_part_with_constants("İşlem Türü", "1100")
         self.fill_ready_part_with_constants("Gelir Kayıt Alt Türü", "2")
 
         self.fill_ready_part_with_constants("Faaliyet Kodu", "479114")
@@ -397,6 +404,11 @@ class myGelir(QMainWindow):
 
         self.fill_ready_part_kdv_haric(df,"Tutar (KDV Hariç)","Fatura Tutarı","Toplam Vergi")
 
+        self.fill_ready_part_with_constants("Bildirim Türü", "")
+        self.fill_ready_part_with_constants("Özel Matrah İşlem Türü", "")
+        self.fill_ready_part_with_constants("İşlem Bedeli", "")
+        self.fill_ready_part_with_constants("İşlem Bedelinden Düşülecek Tutar", "")
+        self.fill_ready_part_with_constants("Özel Matrah Matraha Dahil Olmayan Bedel", "")
         self.fill_ready_part_with_constants("Kredi Kartı", '0')
         self.fill_ready_part_with_constants("Açıklama", 'Fatura Toplu Belge')
 
